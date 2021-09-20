@@ -1,0 +1,22 @@
+{
+  "name": "websocketlab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andsju/WebSocketLab.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andsju/WebSocketLab/issues"
+  },
+  "homepage": "https://github.com/andsju/WebSocketLab#readme",
+  "dependencies": {
+    "ws": "^8.2.2"
+  }
+}
