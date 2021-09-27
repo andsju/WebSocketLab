@@ -1,0 +1,37 @@
+* {box-sizing: border-box}
+
+html {
+    font-family: monospace;
+    background-color: #222;
+    color: #ddd
+}
+
+input,
+button {
+    padding: 0.5rem
+}
+
+.hidden {
+    display: none;
+}
+
+/* chat conversation */
+ul {
+    list-style-type: none;
+    padding: 0 1rem;
+}
+
+li {
+    display: grid;
+    grid-template-columns: 1fr 5fr 1fr;
+    gap: 1rem;
+    margin: 0.5rem 0;
+}
+
+li * {
+    margin: 0;
+}
+
+li time {
+    text-align: right;
+}

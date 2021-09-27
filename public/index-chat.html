@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat application</title>
+
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+
+    <h1>Time to chat!</h1>
+
+    <input type="text" id="inputNickname" maxlength="8" placeholder="Your name (3-8 characters)">
+    <button id="buttonNickname">Enter chat</button>
+    <hr>
+    <input type="text" id="inputText" placeholder="Type and press Enter" class="hidden">
+
+    <ul id="conversation">
+    </ul>
+
+    <!-- template to clone -->
+    <template id="message">
+        <li>
+            <span></span>
+            <p></p>
+            <time datetime=""></time>
+        </li>
+    </template>
+
+
+    <script type="module">
+
+        // import functions
+        import { parse } from './js/functions.mjs';
+
+        // use WebSocket
+        const websocket = new WebSocket("ws://localhost:8081");
+
+        // listen on close event
+        websocket.addEventListener('close', (event) => {
+            console.log('Server down...', event);
+        })
+
+        let nickname;
+
+        const inputNickname = document.getElementById("inputNickname");
+        const buttonNickname = document.getElementById("buttonNickname");
+        const inputText = document.getElementById("inputText"); 
+
+        inputNickname.focus();
+        
+        buttonNickname.addEventListener("click", () => {
+            nickname = inputNickname.value;
+            if (nickname.length > 2) {
+
+                // disable element
+                inputNickname.setAttribute("disabled", "disabled");
+                
+                // hide button
+                buttonNickname.classList.toggle("hidden");
+
+                // display field for new text messages - focus element to set a cursor
+                inputText.classList.toggle("hidden");
+                inputText.focus();
+            }
+        });
+
+        inputText.addEventListener("keydown", (event) => {
+            
+            console.log(event);
+
+            // todo - send message to server using websocket.send;
+
+        });
+
+    </script>
+
+</body>
+</html>
