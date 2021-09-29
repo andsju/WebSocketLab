@@ -33,7 +33,13 @@
     <script type="module">
 
         // import functions
-        import { parse } from './js/functions.mjs';
+        import { parse, addMessage } from './js/functions.mjs';
+
+
+        addMessage("Gandalf", "You shall not pass!", new Date());
+        addMessage("Sam", "Mr Frodo...", new Date());
+
+
 
         // use WebSocket
         const websocket = new WebSocket("ws://localhost:8081");
