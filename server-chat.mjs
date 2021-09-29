@@ -1,5 +1,5 @@
 // use ws library - npm install ws
-import { WebSocketServer } from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 
 // import functions
 import { parse } from './libs/functions.mjs';
@@ -28,7 +28,20 @@ wss.on('connection', (ws) => {
         // use parse function
         let obj = parse(data);
 
-        console.log(obj);
+        // use property 'type' to handle message event
+        switch (obj.type) {
+            
+            case "chat":
+                
+                // broadcast
+                wss.broadcastButExclude(JSON.stringify(obj), ws);
+                break;
+        
+            default:
+
+                console.log("Message type is: ", obj.type);
+                break;
+        }
     })
 });
 
