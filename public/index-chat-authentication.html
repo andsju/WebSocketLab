@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat application</title>
+
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+
+    <h1>Time to chat!</h1>
+
+    <input type="text" id="inputNickname" maxlength="8" placeholder="Your name (3-8 characters)">
+    <button id="buttonNickname">Enter chat</button>
+    <hr>
+    <input type="text" id="inputText" placeholder="Type and press Enter" class="hidden">
+
+    <ul id="conversation">
+    </ul>
+
+    <!-- template to clone -->
+    <template id="message">
+        <li>
+            <span></span>
+            <p></p>
+            <time datetime=""></time>
+        </li>
+    </template>
+
+
+    <script type="module">
+
+        // import functions
+        import { parse, addMessage, formatDate, postData, getCookie } from './js/functions.mjs';
+
+        // use WebSocket
+        const websocket = new WebSocket("ws://localhost:8081");
+
+        // listen on close event
+        websocket.addEventListener('close', (event) => {
+            console.log('Server down...', event);
+        })
+
+        // listen to message event
+        websocket.addEventListener("message", ({ data }) => {
+            console.log("Message from server: ", data);
+            
+            let obj = parse(data);
+
+            // use property 'type' to handle message event
+            switch (obj.type) {
+                
+                case "chat":
+                    
+                    // display message to client(s)
+                    addMessage(obj.data.nickname, obj.data.text, new Date(obj.data.date));
+                    break;
+            
+                default:
+                    break;
+            }
+        })
+
+        const inputNickname = document.getElementById("inputNickname");
+        const buttonNickname = document.getElementById("buttonNickname");
+        const inputText = document.getElementById("inputText"); 
+
+        // variables and event listeners
+        let nickname; 
+        
+        nickname = getCookie("nickname");
+
+        if (nickname !== undefined) {
+            inputNickname.value = nickname;
+            inputNickname.setAttribute("disabled", "disabled");
+            buttonNickname.classList.toggle("hidden");
+            inputText.classList.toggle("hidden");
+            inputText.focus();
+        }
+        
+        buttonNickname.addEventListener("click", () => {
+            nickname = inputNickname.value;
+
+            if (nickname.length > 2) {
+
+                postData('/authenticate', {nickname: nickname})
+                .then(data => {
+                    if (data.authenticated === true) {
+                        
+                        document.cookie = "nickname="+nickname+"; max-age="+5;
+                        location.reload(false);
+
+                    } else {
+                        inputNickname.value = "Not a proper nickname..."
+                    } 
+                });
+            }
+        });
+
+        inputText.addEventListener("keydown", (event) => {
+            
+            // add message when Enter key is pressed
+            if (event.code === "Enter" && inputText.value.length > 0) {
+
+                let date = new Date();
+
+                // add message to DOM
+                addMessage(nickname, inputText.value, date);
+
+                // send to websocket server
+                let obj = {type: "chat", data: { nickname: nickname, text: inputText.value, date: date}};
+                websocket.send(JSON.stringify(obj));
+
+                // clear
+                inputText.value = "";
+            }
+        });
+
+    </script>
+
+</body>
+</html>
